@@ -3,9 +3,8 @@ const { createError } = require('../utils/createError')
 
 exports.updateFavorites = async (req, res, next) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, { "$addToSet": { favorites: req.body.favorites } }, {
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, { favorites: req.body.favorites }, {
       new: true,
-      upsert: true,
       runValidators: true
     })
     res.status(200).json({
