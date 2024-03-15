@@ -8,6 +8,7 @@ exports.signup = async (req, res, next) => {
     const encryptedPassword = await bcrypt.hash(req.body.password, 12)
     const newUser = await User.create({
       name: req.body.name,
+      email: req.body.email,
       password: encryptedPassword,
     })
     const id = newUser._id
@@ -16,6 +17,7 @@ exports.signup = async (req, res, next) => {
     })
     res.cookie('jwt', token, cookieOptions())
     newUser.password = undefined
+    newUser._id = undefined
     res.status(201).json({
       status: "success",
       data: {
@@ -23,6 +25,8 @@ exports.signup = async (req, res, next) => {
       }
     })
   } catch (err) {
-    next(createError(err, 400))
+    if (err.code === 11000)
+      return next(createError(res, 'An account with this email already exists', 400))
+    return next(createError(res, 'something went wrong', 400))
   }
 }

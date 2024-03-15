@@ -7,6 +7,6 @@ exports.logout = async (req, res, next) => {
       status: 'Success'
     })
   } catch (err) {
-    return next(createError(err, 400))
+    return next(createError(res, 'something went wrong', 400))
   }
 }

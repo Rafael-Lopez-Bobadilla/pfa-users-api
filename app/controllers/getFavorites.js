@@ -8,6 +8,6 @@ exports.getFavorites = async (req, res, next) => {
       favorites: user.favorites
     })
   } catch (err) {
-    return next(createError(err, 400))
+    return next(createError(res, 'something went wrong', 400))
   }
 }

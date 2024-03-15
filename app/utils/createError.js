@@ -1,5 +1,8 @@
-exports.createError = (message, code) => {
-  const error = new Error(message)
-  error.statusCode = code
-  return error
+exports.createError = (res, message, code) => {
+  res.status(code).json({
+    status: "fail",
+    data: {
+      error: message
+    }
+  })
 }
