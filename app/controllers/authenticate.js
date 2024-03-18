@@ -1,11 +1,13 @@
 const { createError } = require('../utils/createError')
-exports.authenticate = async (req, res, next) => {
+const { getResUser } = require('../utils/getResUser')
+exports.authenticate = async (req, res) => {
+  const resUser = getResUser(req.user)
   try {
     res.status(200).json({
       status: "success",
-      user: req.user
+      user: resUser
     })
   } catch (err) {
-    return next(createError(res, 'something went wrong', 400))
+    createError(res, 'something went wrong', 400)
   }
 }

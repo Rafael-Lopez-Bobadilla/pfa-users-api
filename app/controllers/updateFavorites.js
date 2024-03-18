@@ -1,7 +1,7 @@
 const User = require('../userModel')
 const { createError } = require('../utils/createError')
 
-exports.updateFavorites = async (req, res, next) => {
+exports.updateFavorites = async (req, res) => {
   try {
     const updatedUser = await User.findByIdAndUpdate(req.user.id, { favorites: req.body.favorites }, {
       new: true,
@@ -12,6 +12,6 @@ exports.updateFavorites = async (req, res, next) => {
       user: updatedUser
     })
   } catch (err) {
-    return next(createError(err, 400))
+    createError(res, 'Something went wrong', 400)
   }
 }

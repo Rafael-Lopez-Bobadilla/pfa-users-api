@@ -3,7 +3,8 @@ const { cookieOptions } = require('../utils/cookieOptions')
 const User = require('../userModel')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-exports.signup = async (req, res, next) => {
+const { getResUser } = require('../utils/getResUser')
+exports.signup = async (req, res) => {
   try {
     const encryptedPassword = await bcrypt.hash(req.body.password, 12)
     const newUser = await User.create({
@@ -15,18 +16,17 @@ exports.signup = async (req, res, next) => {
     const token = jwt.sign({ id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN
     })
-    res.cookie('jwt', token, cookieOptions())
-    newUser.password = undefined
-    newUser._id = undefined
+    res.cookie('pfa_jwt', token, cookieOptions())
+    const resUser = getResUser(newUser)
     res.status(201).json({
       status: "success",
-      data: {
-        user: newUser
-      }
+      user: resUser
     })
   } catch (err) {
-    if (err.code === 11000)
-      return next(createError(res, 'An account with this email already exists', 400))
-    return next(createError(res, 'something went wrong', 400))
+    if (err.code === 11000) {
+      createError(res, 'An account with this email already exists', 400)
+      return
+    }
+    createError(res, 'something went wrong', 400)
   }
 }

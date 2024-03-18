@@ -2,6 +2,7 @@ const { createError } = require('../utils/createError')
 const User = require('../userModel')
 const { cookieOptions } = require('../utils/cookieOptions')
 const jwt = require('jsonwebtoken')
+const { getResUser } = require('../utils/getResUser')
 const { OAuth2Client } = require('google-auth-library')
 const verify = async (token, client) => {
   const ticket = await client.verifyIdToken({
@@ -11,41 +12,40 @@ const verify = async (token, client) => {
   const payload = ticket.getPayload();
   return payload
 }
-exports.googleAuth = async (req, res, next) => {
+exports.googleAuth = async (req, res) => {
   try {
     const client = new OAuth2Client();
     const { authorization } = req.headers
     const tokenID = authorization.split(' ')[1]
     const info = await verify(tokenID, client)
     const { email, name } = info
-    let user = await User.findOne({ email }).select('+password')
+    let resUser
     let token
+    const user = await User.findOne({ email }).select('+password')
     if (user) {
       const id = user._id
       token = jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
       })
+      resUser = getResUser(user)
     }
     if (!user) {
-      user = await User.create({
+      const newUser = await User.create({
         name: name,
         email: email,
       })
-      const id = user._id
+      const id = newUser._id
       token = jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
       })
+      resUser = getResUser(newUser)
     }
-    if (user.password) user.password = undefined
-    user._id = undefined
-    res.cookie('jwt', token, cookieOptions())
+    res.cookie('pfa_jwt', token, cookieOptions())
     res.status(200).json({
       status: "success",
-      data: {
-        user: user
-      }
+      user: resUser
     })
   } catch (err) {
-    next(createError(res, 'something went wrong', 400))
+    createError(res, 'something went wrong', 400)
   }
 }
