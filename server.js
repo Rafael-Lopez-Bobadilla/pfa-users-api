@@ -11,7 +11,7 @@ mongoose.connect(DB).then(conection => {
   console.log('database conected')
 })
 
-const server = app.listen(5002, () => console.log('app running'))
+const server = app.listen(process.env.PORT, () => console.log('app running'))
 
 process.on('unhandledRejection', err => {
   console.log(err.name, err.message)
