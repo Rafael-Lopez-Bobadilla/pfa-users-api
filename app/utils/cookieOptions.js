@@ -7,7 +7,7 @@ exports.cookieOptions = (logout) => {
       * 60 /*minutos a horas*/),
     secure: true, //only sent over https
     httpOnly: true, //this way it cant be manipulated by javascript on the client
-    domain: 'https://pets-for-adoption.netlify.app/'
+    sameSite: 'None'
   }
   if (logout) {
     options.expires = new Date(Date.now())
