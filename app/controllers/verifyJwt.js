@@ -4,6 +4,7 @@ const User = require('../userModel')
 exports.verifyJwt = async (req, res, next) => {
   try {
     const token = req.cookies.pfa_jwt
+    console.log(req.cookies)
     if (!token) {
       createError(res, 'Not logged in', 401)
       return
