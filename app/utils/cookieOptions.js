@@ -6,8 +6,7 @@ exports.cookieOptions = (logout) => {
       * 60 /*segundos a minutos*/
       * 60 /*minutos a horas*/),
     secure: true, //only sent over https
-    httpOnly: true, //this way it cant be manipulated by javascript on the client
-    sameSite: 'None'
+    httpOnly: true //this way it cant be manipulated by javascript on the client
   }
   if (logout) {
     options.expires = new Date(Date.now())
