@@ -21,7 +21,12 @@ const userSchema = new mongoose.Schema({
 
 //method avialable to every document
 userSchema.methods.correctPassword = async function (candidate, actualPassword) {
-  return await bcrypt.compare(candidate, actualPassword)
+  try {
+    const correct = await bcrypt.compare(candidate, actualPassword)
+    return correct
+  } catch {
+    return false
+  }
 }
 
 const User = mongoose.model('User', userSchema)
