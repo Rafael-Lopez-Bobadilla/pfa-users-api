@@ -6,7 +6,7 @@ const router = require('./routes')
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.use(cors({
-  origin: 'https://pets-for-adoption.netlify.app',
+  origin: process.env.ORIGIN,
   credentials: true
 }))
 app.use(helmet())
