@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 const User = require('../userModel')
 exports.verifyJwt = async (req, res, next) => {
   try {
-    console.log('REQUEST: '+req)
     const token = req.cookies.pfa_jwt
     console.log('Token: '+token)
     if (!token) {
