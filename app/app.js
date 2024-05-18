@@ -3,7 +3,7 @@ const helmet = require('helmet')
 const app = express()
 const cors = require('cors')
 const router = require('./routes')
-var cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.use(cors({
   origin: process.env.ORIGIN,
