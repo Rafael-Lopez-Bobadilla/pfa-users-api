@@ -1,6 +1,5 @@
-exports.createError = (res, message, code) => {
-  res.status(code).json({
-    status: "fail",
-    error: message
-  })
-}
+exports.createError = (message, code) => {
+  const err = new Error(message);
+  err.status = code;
+  return err;
+};
