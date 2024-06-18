@@ -1,10 +1,13 @@
-const { getResUser } = require("../utils/getResUser");
+const User = require("../userModel");
 exports.authenticate = async (req, res, next) => {
-  const resUser = getResUser(req.user);
   try {
+    const user = await User.findById(req.userID).select(
+      "name email favorites -_id"
+    );
+    console.log(user);
     res.status(200).json({
       status: "success",
-      user: resUser,
+      user,
     });
   } catch (err) {
     next(err);

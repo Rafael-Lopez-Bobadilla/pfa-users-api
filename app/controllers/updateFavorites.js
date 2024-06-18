@@ -1,26 +1,23 @@
 const User = require("../userModel");
-const { getResUser } = require("../utils/getResUser");
+const createError = require("../utils/createError");
 exports.updateFavorites = async (req, res, next) => {
-  const user = req.user;
-  let { favorites } = user;
-  if (favorites.includes(req.body.favorite)) {
-    favorites.splice(favorites.indexOf(req.body.favorite), 1);
-  } else {
-    favorites.push(req.body.favorite);
-  }
+  const { action } = req.params;
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { favorites: favorites },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    const resUser = getResUser(updatedUser);
+    let update;
+    if (action === "add") {
+      update = { $push: { favorites: req.body.favorite } };
+    } else if (action === "remove") {
+      update = { $pull: { favorites: req.body.favorite } };
+    } else {
+      createError("Invalid action", 400);
+    }
+    const updatedUser = await User.findByIdAndUpdate(req.userID, update, {
+      new: true,
+      runValidators: true,
+    }).select("name email favorites -_id");
     res.status(200).json({
       status: "Success",
-      user: resUser,
+      user: updatedUser,
     });
   } catch (err) {
     next(err);

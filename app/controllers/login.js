@@ -2,7 +2,6 @@ const { createError } = require("../utils/createError");
 const User = require("../userModel");
 const { cookieOptions } = require("../utils/cookieOptions");
 const jwt = require("jsonwebtoken");
-const { getResUser } = require("../utils/getResUser");
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -10,7 +9,7 @@ exports.login = async (req, res, next) => {
       const err = createError("name or password no included", 400);
       throw err;
     }
-    let user = await User.findOne({ email }).select("+password");
+    let user = await User.findOne({ email }).select("+password -_id");
     if (!user) {
       const err = createError("Incorrect email or password", 401);
       throw err;
@@ -24,11 +23,12 @@ exports.login = async (req, res, next) => {
     const token = jwt.sign({ id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-    const resUser = getResUser(user);
+    const authenticatedUser = { ...user };
+    delete authenticatedUser.password;
     res.cookie("pfa_jwt", token, cookieOptions());
     res.status(200).json({
       status: "success",
-      user: resUser,
+      user: authenticatedUser,
     });
   } catch (err) {
     next(err);

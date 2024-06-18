@@ -1,7 +1,6 @@
 const User = require("../userModel");
 const { cookieOptions } = require("../utils/cookieOptions");
 const jwt = require("jsonwebtoken");
-const { getResUser } = require("../utils/getResUser");
 const { OAuth2Client } = require("google-auth-library");
 const verify = async (token, client) => {
   const ticket = await client.verifyIdToken({
@@ -19,15 +18,18 @@ exports.googleAuth = async (req, res, next) => {
     const tokenID = authorization.split(" ")[1];
     const info = await verify(tokenID, client);
     const { email, name } = info;
-    let resUser;
-    let token;
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password -_id -__v");
     if (user) {
       const id = user._id;
-      token = jwt.sign({ id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
-      resUser = getResUser(user);
+      user.password = undefined;
+      res.cookie("pfa_jwt", token, cookieOptions());
+      res.status(200).json({
+        status: "success",
+        user,
+      });
     }
     if (!user) {
       const newUser = await User.create({
@@ -38,13 +40,13 @@ exports.googleAuth = async (req, res, next) => {
       token = jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
-      resUser = getResUser(newUser);
+      newUser.password = undefined;
+      res.cookie("pfa_jwt", token, cookieOptions());
+      res.status(200).json({
+        status: "success",
+        user: newUser,
+      });
     }
-    res.cookie("pfa_jwt", token, cookieOptions());
-    res.status(200).json({
-      status: "success",
-      user: resUser,
-    });
   } catch (err) {
     next(err);
   }

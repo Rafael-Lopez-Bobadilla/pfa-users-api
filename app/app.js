@@ -5,6 +5,7 @@ const cors = require("cors");
 const router = require("./routes");
 const cookieParser = require("cookie-parser");
 const { errorHandler } = require("./utils/errorHandler");
+app.use(helmet());
 app.use(cookieParser());
 app.use(
   cors({
@@ -12,7 +13,6 @@ app.use(
     credentials: true,
   })
 );
-app.use(helmet());
 app.use(express.json());
 app.use("/api/v1", router);
 app.use(errorHandler);

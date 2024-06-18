@@ -3,7 +3,6 @@ const { cookieOptions } = require("../utils/cookieOptions");
 const User = require("../userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const { getResUser } = require("../utils/getResUser");
 exports.signup = async (req, res, next) => {
   try {
     const encryptedPassword = await bcrypt.hash(req.body.password, 12);
@@ -17,10 +16,11 @@ exports.signup = async (req, res, next) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
     res.cookie("pfa_jwt", token, cookieOptions());
-    const resUser = getResUser(newUser);
+    const user = { ...newUser };
+    delete user._id;
     res.status(201).json({
       status: "success",
-      user: resUser,
+      user: user,
     });
   } catch (err) {
     if (err.code === 11000) {
