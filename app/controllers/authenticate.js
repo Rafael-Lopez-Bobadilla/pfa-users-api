@@ -4,11 +4,7 @@ exports.authenticate = async (req, res, next) => {
     const user = await User.findById(req.userID).select(
       "name email favorites -_id"
     );
-    console.log(user);
-    res.status(200).json({
-      status: "success",
-      user,
-    });
+    res.status(200).json(user);
   } catch (err) {
     next(err);
   }

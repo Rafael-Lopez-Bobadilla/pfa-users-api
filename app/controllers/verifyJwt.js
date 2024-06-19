@@ -8,7 +8,6 @@ exports.verifyJwt = async (req, res, next) => {
     }
     const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     req.userID = decoded.id;
-    console.log(decoded);
     next();
   } catch (err) {
     next(err);

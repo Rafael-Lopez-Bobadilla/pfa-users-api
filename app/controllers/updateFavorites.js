@@ -14,11 +14,8 @@ exports.updateFavorites = async (req, res, next) => {
     const updatedUser = await User.findByIdAndUpdate(req.userID, update, {
       new: true,
       runValidators: true,
-    }).select("name email favorites -_id");
-    res.status(200).json({
-      status: "Success",
-      user: updatedUser,
-    });
+    }).select("name email favorites");
+    res.status(200).json(updatedUser);
   } catch (err) {
     next(err);
   }
