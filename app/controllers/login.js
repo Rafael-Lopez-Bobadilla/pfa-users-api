@@ -7,17 +7,17 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      const err = createError("name or password no included", 400);
+      const err = createError("name or password not included", 400);
       throw err;
     }
     const user = await User.findOne({ email }).select("+password");
     if (!user) {
-      const err = createError("Incorrect email or password", 401);
+      const err = createError("email", 401);
       throw err;
     }
     const correct = await user.correctPassword(password, user.password);
     if (!correct) {
-      const err = createError("Incorrect email or password", 401);
+      const err = createError("password", 401);
       throw err;
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
