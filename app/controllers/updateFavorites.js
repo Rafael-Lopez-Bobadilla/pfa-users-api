@@ -9,12 +9,13 @@ exports.updateFavorites = async (req, res, next) => {
     } else if (action === "remove") {
       update = { $pull: { favorites: req.body.favorite } };
     } else {
-      createError("Invalid action", 400);
+      const err = createError("Invalid action", 400);
+      throw err;
     }
     const updatedUser = await User.findByIdAndUpdate(req.userID, update, {
       new: true,
       runValidators: true,
-    }).select("name email favorites");
+    }).select("name email favorites -_id");
     res.status(200).json(updatedUser);
   } catch (err) {
     next(err);
