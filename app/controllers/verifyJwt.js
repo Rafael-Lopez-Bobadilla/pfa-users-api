@@ -1,7 +1,5 @@
 const { createError } = require("./utils/createError");
 const jwt = require("jsonwebtoken");
-const { getToken } = require("./utils/getToken");
-const { cookieOptions } = require("./utils/cookieOptions");
 exports.verifyJwt = async (req, res, next) => {
   try {
     const token = req.cookies.pfa_jwt;
@@ -12,7 +10,6 @@ exports.verifyJwt = async (req, res, next) => {
     req.userID = decoded.id;
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 };
