@@ -1,5 +1,6 @@
-const { createError } = require("../utils/createError");
-const { cookieOptions } = require("../utils/cookieOptions");
+const { createError } = require("./utils/createError");
+const { cookieOptions } = require("./utils/cookieOptions");
+const { getToken } = require("./utils/getToken");
 const User = require("../userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -12,9 +13,7 @@ exports.signup = async (req, res, next) => {
       email: req.body.email,
       password: encryptedPassword,
     });
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    const token = getToken(newUser._id);
     res.cookie("pfa_jwt", token, cookieOptions());
     const user = pick(newUser.toJSON(), ["name", "email", "favorites"]);
     res.status(201).json(user);

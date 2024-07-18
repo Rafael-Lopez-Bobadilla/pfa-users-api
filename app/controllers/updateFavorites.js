@@ -1,5 +1,5 @@
 const User = require("../userModel");
-const createError = require("../utils/createError");
+const createError = require("./utils/createError");
 exports.updateFavorites = async (req, res, next) => {
   const { action } = req.params;
   try {

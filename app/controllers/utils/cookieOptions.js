@@ -1,6 +1,6 @@
 exports.cookieOptions = (logout) => {
   const options = {
-    expires: new Date(Date.now() + process.env.COOKIE_EXPIRES * 1000 * 60 * 60),
+    expires: new Date(Date.now() + process.env.JWT_EXPIRES_IN * 1000 * 60 * 60),
     secure: true,
     httpOnly: true,
     sameSite: "Strict",

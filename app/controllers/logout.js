@@ -1,4 +1,4 @@
-const { cookieOptions } = require("../utils/cookieOptions");
+const { cookieOptions } = require("./utils/cookieOptions");
 exports.logout = async (req, res, next) => {
   try {
     res.cookie("pfa_jwt", "null", cookieOptions(true));

@@ -4,7 +4,7 @@ const app = express();
 const cors = require("cors");
 const router = require("./routes");
 const cookieParser = require("cookie-parser");
-const { errorHandler } = require("./utils/errorHandler");
+const { errorHandler } = require("./errorHandler");
 app.use(helmet());
 app.use(cookieParser());
 app.use(

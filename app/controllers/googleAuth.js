@@ -1,5 +1,6 @@
 const User = require("../userModel");
-const { cookieOptions } = require("../utils/cookieOptions");
+const { cookieOptions } = require("./utils/cookieOptions");
+const { getToken } = require("./utils/getToken");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 const { pick } = require("lodash");
@@ -21,9 +22,7 @@ exports.googleAuth = async (req, res, next) => {
     const { email, name } = info;
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      });
+      const token = getToken(user._id);
       res.cookie("pfa_jwt", token, cookieOptions());
       res.status(200).json(pick(user.toJSON(), ["name", "email", "favorites"]));
     }
@@ -33,9 +32,7 @@ exports.googleAuth = async (req, res, next) => {
         email: email,
       });
       const id = newUser._id;
-      token = jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      });
+      const token = getToken(newUser._id);
       res.cookie("pfa_jwt", token, cookieOptions());
       res
         .status(200)
